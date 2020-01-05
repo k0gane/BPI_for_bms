@@ -21,9 +21,9 @@ def BPI_calc(s,k,z,m):
     S_dash=S/K
     Z_dash=Z/K
     if(s>=k):
-        return 100*(pow(math.log(S_dash),1.5))/(pow(math.log(Z_dash),1.5))
+        return 100*(pow(math.log(S_dash),1.175))/(pow(math.log(Z_dash),1.175))
     else:
-        return -100*(pow(-math.log(S_dash),1.5))/(pow(math.log(Z_dash),1.5))
+        return -100*(pow(-math.log(S_dash),1.175))/(pow(math.log(Z_dash),1.175))
  
 player_name=input()
 path_w = player_name+'.csv'
@@ -37,10 +37,10 @@ tag_URL3 = "&exec=%8C%9F%8D%F5&type=tag"
 IR_URL=""
 with open(path_w, mode='w') as f:
     f.write("難易度,"+"曲名,"+"理論値,"+"全国TOP,"+player_name+"さんのスコア,"+"全国平均,"+"BPI\n")
-    for i in range(0,13):#TAG:sl0~sl12
-        sl="sl"+str(i)
+    for i in range(1,26):#TAG:sl0~sl12
+        sl="★"+str(i)
         print ("\n"+sl+"\n")
-        tag_URL=tag_URL1+tag_URL2+sl+tag_URL3
+        tag_URL="http://www.dream-pro.info/~lavalse/LR2IR/search.cgi?mode=search&type=insane&exlevel=" + str(i) + "&7keys=1"
         tag_html = urllib.request.urlopen(tag_URL).read().decode('shift_JIS', 'ignore')
         tag_soup = BeautifulSoup(tag_html, "html.parser")
         href = [a.get("href") for a in tag_soup.find_all("a")]
@@ -58,7 +58,6 @@ with open(path_w, mode='w') as f:
                 song=song.split(">")[1][:-3]
                 song_list.append(song)
         count=0
-         
         for IR_URL in href:#jump urlpage
             if('ranking&bmsid=' in IR_URL):
                 #print IR_URL

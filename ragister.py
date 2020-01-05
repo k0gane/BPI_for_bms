@@ -56,7 +56,7 @@ with open("songs.json", 'w') as f:
             if('ranking&bmsid=' in IR_URL):#SP★1~???, DP★1~???のリンクを省く
                 #print IR_URL
                 IR_URLs=IR_URL.split("&")
-                j="1"
+                j=1
                 now_song=song_list[count]
                 print(now_song)
                 Rank=1
@@ -67,7 +67,7 @@ with open("songs.json", 'w') as f:
                 BPI_score = []
                 flag=True
                 while True:#page1~n
-                    IR_URL=tag_URL1+IR_URLs[0]+"&page="+j+"&"+IR_URLs[1]
+                    IR_URL=tag_URL1+IR_URLs[0]+"&page="+str(j)+"&"+IR_URLs[1]
                     #print (IR_URL)
                     IR_html=urllib.request.urlopen(IR_URL).read().decode('shift_JIS', 'ignore')
                     IR_soup = BeautifulSoup(IR_html, "html.parser")
@@ -76,21 +76,19 @@ with open("songs.json", 'w') as f:
                     except:
                         break
                     if(players_count == 0):
-                        IR_list=str(IR_soup.findAll("table")[1]).split("\n")
-                        player = IR_list[3].strip('</td>').split('<td>')
+                        IR_number=str(IR_soup.findAll("table")[1]).split("\n")
+                        player = IR_number[3].strip('</td>').split('<td>')
                         player = int(player[1].strip('</td>'))
                         players_count += 1
                         for bpn in BPI_per:
                             BPI_rank.append(round(bpn * player))
-
-
                     for IR_player in IR_list:#table cleaning
+                        #rank = person_count + ((Rank - 1) * 100)
                         if('<tr><td align="center" rowspan="2">' in IR_player):
                             IR_data=IR_player.split("<td>")
                             IR_data[0]=IR_data[0][35:]
                             IR_data[1]=IR_data[1][:-4]
-                            for k in range(len(IR_data)):#IR_data get
-                             
+                            for k in range(len(IR_data)):#IR_data get 
                                 IR_data[k]=IR_data[k][:-5]
                                 index=IR_data[k].find('>')
                                 IR_data[k]=IR_data[k][index+1:]
@@ -107,7 +105,7 @@ with open("songs.json", 'w') as f:
                                 BPI_score.append(int(IR_data[5].split("/")[0]))
                             Rank+=1
                             average_score+=int(IR_data[5].split("/")[0])
-                    j=str(int(j)+1)
+                    j += 1
                 average_score=average_score/Rank
                 average_score_list.append(average_score)#平均スコア
                 print("プレイ人数:" + str(player)) 
@@ -118,7 +116,7 @@ with open("songs.json", 'w') as f:
                 BPI_otehon = [90, 80, 70, 60, 50, 40, 30, 20, 10]
                 great_p = 1.8
                 min_bunsan = 1e9
-                for i in range(80, 1001):
+                for i in range(1, 1001):
                     BPI_zissai = []
                     i /= 100
                     for bs in BPI_score:
@@ -130,6 +128,10 @@ with open("songs.json", 'w') as f:
                         great_p = i
                         min_bunsan = bunsan
                 print("理想のp値:" + str(great_p))
+                BPI_kekka = []
+                for bs in BPI_score:
+                    BPI_kekka.append(BPI_calc(bs,average_score,zenichi,max_score,great_p))
+                print(BPI_kekka)
                 songs[now_song] = {"grade":sl.strip("★") , "max_score":max_score, "zenichi":zenichi, "average":average_score, "p":great_p, "players":player}
                 count+=1
     json.dump(songs, f, ensure_ascii=False, indent=4)

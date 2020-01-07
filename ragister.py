@@ -63,12 +63,12 @@ with open("songs.json", 'w') as f:
                 average_score=0
                 player_score=0
                 players_count = 0
+                flag_bug = False
                 BPI_rank = []
                 BPI_score = []
                 flag=True
                 while True:#page1~n
                     IR_URL=tag_URL1+IR_URLs[0]+"&page="+str(j)+"&"+IR_URLs[1]
-                    #print (IR_URL)
                     IR_html=urllib.request.urlopen(IR_URL).read().decode('shift_JIS', 'ignore')
                     IR_soup = BeautifulSoup(IR_html, "html.parser")
                     try:
@@ -81,9 +81,12 @@ with open("songs.json", 'w') as f:
                         player = int(player[1].strip('</td>'))
                         players_count += 1
                         for bpn in BPI_per:
-                            BPI_rank.append(round(bpn * player))
+                            rank_append = math.ceil(bpn * player)
+                            if(rank_append == 1 or (rank_append in BPI_rank)):
+                                rank_append += 1
+                            BPI_rank.append(math.ceil(bpn * player))
+                        print(BPI_rank)
                     for IR_player in IR_list:#table cleaning
-                        #rank = person_count + ((Rank - 1) * 100)
                         if('<tr><td align="center" rowspan="2">' in IR_player):
                             IR_data=IR_player.split("<td>")
                             IR_data[0]=IR_data[0][35:]
@@ -102,7 +105,8 @@ with open("songs.json", 'w') as f:
                                     zenichi = int(IR_data[5].split("/")[0])
                                 HMax_list.append(zenichi)
                             if(Rank in BPI_rank):
-                                BPI_score.append(int(IR_data[5].split("/")[0]))
+                                sc = int(IR_data[5].split("/")[0])
+                                BPI_score.append(sc)
                             Rank+=1
                             average_score+=int(IR_data[5].split("/")[0])
                     j += 1
@@ -120,9 +124,12 @@ with open("songs.json", 'w') as f:
                     BPI_zissai = []
                     i /= 100
                     for bs in BPI_score:
-                        BPI_zissai.append(BPI_calc(bs,average_score,zenichi,max_score,i))
+                        if(bs <= max_score):
+                            BPI_zissai.append(BPI_calc(bs,average_score,zenichi,max_score,i))
+                        else:
+                            BPI_zissai.append(90)
                     bunsan = 0
-                    for j in range(9):
+                    for j in range(len(BPI_score)):
                         bunsan += (BPI_otehon[j] - BPI_zissai[j])**2
                     if(min_bunsan > bunsan):
                         great_p = i

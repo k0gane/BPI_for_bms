@@ -35,24 +35,25 @@ tag_soup = BeautifulSoup(tag_html, "html.parser")
 href = [a.get("href") for a in tag_soup.find_all("a")]
 song_table=str(tag_soup.findAll("table")[5]).split("\n")
 
-peya = []
+my_data = {}
+
 for i in range(1035):
-    au = song_table[14 * i + 18].split('>')[2].split('<')[0]
-    my_score = int(song_table[14 * i + 21].split('>')[1].strip('</td'))
-    max_score = int(song[au]['max_score'])
-    zenichi = int(song[au]['zenichi'])
-    average = int(song[au]['average'])
-    p = float(song[au]['p'])
-    print(BPI_calc(my_score, average, zenichi, max_score, p))
+    song_id = i + 1
+    au = song_table[14 * i + 18].split('>')[2].split('<')[0] #タイトル
+    my_score = int(song_table[14 * i + 21].split('>')[1].strip('</td')) #スコア
+    rank = int(song_table[14 * i + 20].split('>')[1].strip('</td')) 
+    rate = float(song_table[14 * i + 22].split('>')[1].strip('</td')) 
+    bp = int(song_table[14 * i + 24].split('>')[1].strip('</td'))
+    my_data[song_id] = {"title":au, "score":my_score, "rank":rank, "score_rate":rate, "miss_count":bp}
+
 
 '''
-print(song_table[18])
-print(song_table[20])
-print(song_table[21])
-print(song_table[22])
-print(song_table[24])
+print(song_table[18])#タイトル
+print(song_table[20])#順位
+print(song_table[21])#EXスコア
+print(song_table[22])#レート
+print(song_table[24])#BP
 print("--------------")
-
 print(song_table[32])
 print(song_table[34])
 print(song_table[35])

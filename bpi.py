@@ -88,28 +88,153 @@ for i in range(1, 1036):
                'player':songs_data[str(i)]['players']
                }
     try:
-        bpi = max(BPI_calc(data[i]['my_score'], data[i]['average'], data[i]['zenichi'], data[i]['max_score'], data[i]['p']),-15)
+        bpi = round(max(BPI_calc(data[i]['my_score'], data[i]['average'], data[i]['zenichi'], data[i]['max_score'], data[i]['p']),-15), 2)
         BPI_list.append(bpi)
     except ValueError:
         break
 
-BPI_list.sort(reverse=True)
+sorted_BPI = sorted(BPI_list, reverse=True)
 sougou = sougou_BPI(BPI_list)
-print(BPI_list[:10])
+print(sorted_BPI[:10])
 print(sougou)
 
 
+html_string = '''
+<!DOCTYPE html>
+    <head>
+        <meta charset="UTF-8">
+        <title>発狂BMS score sheet</title>
+    </head>
+    <body>
+        <p>This is your score.</p>
+        <div id="users">
+            <table id="myTable" class="tablesorter">
+                <thead>
+                    <tr>
+                        <th class="sort" data-sort="Ex">Ex</th>
+                        <th class="sort" data-sort="title">title</th>
+                        <th class="sort" data-sort="rank" >rank</th>
+                        <th class="sort" data-sort="score">score</th>
+                        <th class="sort" data-sort="BPI">BPI</th>
+                        <th class="sort" data-sort="minBP">minBP</th>
+                        <th class="sort" data-sort="rate">rate</th>      
+                    </tr>
+                </thead>
+                <tbody class="list">
 '''
-print(song_table[18])#タイトル
-print(song_table[20])#順位
-print(song_table[21])#EXスコア
-print(song_table[22])#レート
-print(song_table[24])#BP
-print("--------------")
-print(song_table[32])
-print(song_table[34])
-print(song_table[35])
-print(song_table[36])
-print(song_table[38])
-print("-------------")
+
+for i in range(1, 1036):
+    row = '\t\t\t\t\t<tr>\n'
+    row += '\t\t\t\t\t\t<td class="Ex">' + str(data[i]['grade']) + '</td>\n'
+    row += '\t\t\t\t\t\t<td class="title">' + str(data[i]['title']) + '</td>\n'
+    row += '\t\t\t\t\t\t<td class="rank">' + str(data[i]['rank']) + '</td>\n'
+    row += '\t\t\t\t\t\t<td class="score">' + str(data[i]['my_score']) + '/' + str(data[i]['max_score']) + '</td>\n'
+    row += '\t\t\t\t\t\t<td class="BPI">' + str(BPI_list[i-1]) + '</td>\n'
+    row += '\t\t\t\t\t\t<td class="minBP">' + str(data[i]['miss_count']) + '</td>\n'
+    row += '\t\t\t\t\t\t<td class="rate">' + str(data[i]['rate']) + '</td>\n'
+    row += '\t\t\t\t\t</tr>\n'
+    html_string += row
+
+html_string+= '''
+                </tbody>
+            </table>
+            <div class="pager">
+                <ul class="pagination"></ul>
+            </div>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+        <script>
+            var options = {
+                valueNames:['Ex', 'title', 'rank', 'score', 'BPI', 'minBP', 'rate' ],
+                page: 25,
+                pagination:{
+                    paginationClass:'pagination',
+                    innerWindow:2,
+                    outerWindow:1,
+                }
+            };
+            var userList = new List('users', options);
+
+            userList.on('sortStart', function(a){
+                console.log(a.i);
+                a.i=1;
+            });
+            userList.sort('title', {order : 'asc'});
+        </script>
+
+        <style>
+        .sort.desc:after{
+            content:'▼';
+        }
+        .sort.asc:after{
+            content:"▲";
+        }
+        </style>
+
+        <style>
+            /* style for pager and pagination from http://wwx.jp/css-pagination*/
+            .pager {
+                overflow: hidden;
+            }
+
+            .pager ul {
+                list-style: none;
+                position: relative;
+                left: 50%;
+                float: left;
+            }
+
+            .pager ul li {
+                margin: 0 1px;
+                position: relative;
+                left: -50%;
+                float: left;
+            }
+
+            .pager ul li span,
+            .pager ul li a {
+                display: block;
+                font-size: 16px;
+                padding: 0.6em 1em;
+                border-radius: 3px;
+            }
+
+            .pager ul li a {
+                background: #EEE;
+                color: #000;
+                text-decoration: none;
+            }
+
+            .pager ul li a:hover {
+                background: #333;
+                color: #FFF;
+            }
+
+            /* added by myself */
+            .pager ul li.active{
+                font-weight: bold;
+            }
+
+            table{
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+            }
+
+            table th,table td{
+            padding: 10px 0;
+            text-align: center;
+            }
+
+            table tr:nth-child(odd){
+            background-color: #eee
+            }
+        </style>
+    </body>
+</html>
 '''
+
+with open(str(n) + '.html', 'w') as f:
+    f.write(html_string)
+
+

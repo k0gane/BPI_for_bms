@@ -32,7 +32,11 @@ def sougou_BPI(BPI_list):
         else:
             s += pow(BPI_list[i], k)
     s /= n
-    return pow(s, 1/k)
+    print(s)
+    if(s < 0):
+        return max(-pow(-s, 1/k), -15)
+    else:
+        return pow(s, 1/k)
 
 
 n = int(input())
@@ -48,13 +52,25 @@ tag_soup = BeautifulSoup(tag_html, "html.parser")
 song_table=str(tag_soup.findAll("table")[5]).split("\n")
 my_data = {}
 
-for i in range(1035):
-    song_id = i + 1
-    au = song_table[14 * i + 18].split('>')[2].split('<')[0] #タイトル
-    my_score = int(song_table[14 * i + 21].split('>')[1].strip('</td')) #スコア
-    rank = int(song_table[14 * i + 20].split('>')[1].strip('</td')) 
-    rate = float(song_table[14 * i + 22].split('>')[1].strip('</td')) 
-    bp = int(song_table[14 * i + 24].split('>')[1].strip('</td'))
+for i in range(1, 1036):
+    song_id = i
+    au = song_table[14 * i + 4].split('>')[2].split('<')[0] #タイトル
+    try:
+        my_score = int(song_table[14 * i + 7].split('>')[1].strip('</td')) #スコア
+    except ValueError:
+        my_score = 0
+    try:
+        rank = int(song_table[14 * i + 6].split('>')[1].strip('</td')) 
+    except ValueError:
+        rank = songs_data[str(i)]['players']
+    try:
+        rate = float(song_table[14 * i + 8].split('>')[1].strip('</td')) 
+    except ValueError:
+        rate = 0
+    try:
+        bp = int(song_table[14 * i + 10].split('>')[1].strip('</td'))
+    except ValueError:
+        bp = songs_data[str(i)]['max_score'] // 2
     my_data[str(song_id)] = {"title":au, "score":my_score, "rank":rank, "score_rate":rate, "miss_count":bp}
 BPI_list = []
 data = {}
@@ -68,15 +84,19 @@ for i in range(1, 1036):
                'rate':my_data[str(i)]['score_rate'],
                'rank':my_data[str(i)]['rank'],
                'miss_count':my_data[str(i)]['miss_count'],
-               'p':songs_data[str(i)]['p']
+               'p':songs_data[str(i)]['p'],
+               'player':songs_data[str(i)]['players']
                }
     try:
-        bpi = BPI_calc(data[i]['my_score'], data[i]['average'], data[i]['zenichi'], data[i]['max_score'], data[i]['p'])
+        bpi = max(BPI_calc(data[i]['my_score'], data[i]['average'], data[i]['zenichi'], data[i]['max_score'], data[i]['p']),-15)
+        BPI_list.append(bpi)
     except ValueError:
-        print(data[i])
         break
-    print(bpi)
 
+BPI_list.sort(reverse=True)
+sougou = sougou_BPI(BPI_list)
+print(BPI_list[:10])
+print(sougou)
 
 
 '''

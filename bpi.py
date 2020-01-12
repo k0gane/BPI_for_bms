@@ -104,10 +104,14 @@ html_string = '''
     <head>
         <meta charset="UTF-8">
         <title>発狂BMS score sheet</title>
+		</script>
     </head>
     <body>
         <p>This is your score.</p>
         <div id="users">
+			<form action="" caption="search songs">
+				<input type="text" class="search">
+			</form>
             <table id="myTable" class="tablesorter">
                 <thead>
                     <tr>

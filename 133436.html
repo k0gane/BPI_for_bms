@@ -2,12 +2,16 @@
 <!DOCTYPE html>
     <head>
         <meta charset="UTF-8">
-        <title>発狂BMS score sheet</title>
+		<title>発狂BMS score sheet</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"></script>
     </head>
     <body>
-        <p>This is your score.</p>
-        <div id="users">
-            <table id="myTable" class="tablesorter">
+		<p>This is your score.</p>
+        <div id="bpi" class="table-scroll">
+			<form action="" caption="search songs">
+				<input type="text" class="search">
+			</form>
+            <table id="bpi_table" class="tablesorter">
                 <thead>
                     <tr>
                         <th class="sort" data-sort="Ex">Ex</th>
@@ -9291,7 +9295,7 @@
 						<td class="rate">68.7</td>
 					</tr>
 					<tr>
-						<td class="Ex">99</td>
+						<td class="Ex">?</td>
 						<td class="title">gravitronicT -ANOTHER-</td>
 						<td class="rank">131</td>
 						<td class="score">3386/4026</td>
@@ -9300,7 +9304,7 @@
 						<td class="rate">84.1</td>
 					</tr>
 					<tr>
-						<td class="Ex">99</td>
+						<td class="Ex">?</td>
 						<td class="title">Into the sunset [ANOTHER]</td>
 						<td class="rank">89</td>
 						<td class="score">1671/2400</td>
@@ -9309,7 +9313,7 @@
 						<td class="rate">69.62</td>
 					</tr>
 					<tr>
-						<td class="Ex">99</td>
+						<td class="Ex">?</td>
 						<td class="title">la noche (end of mix)</td>
 						<td class="rank">128</td>
 						<td class="score">4543/5322</td>
@@ -9318,7 +9322,7 @@
 						<td class="rate">85.36</td>
 					</tr>
 					<tr>
-						<td class="Ex">99</td>
+						<td class="Ex">?</td>
 						<td class="title">Merry Christmas Mr.DO</td>
 						<td class="rank">528</td>
 						<td class="score">2596/3646</td>
@@ -9327,7 +9331,7 @@
 						<td class="rate">71.2</td>
 					</tr>
 					<tr>
-						<td class="Ex">99</td>
+						<td class="Ex">?</td>
 						<td class="title">Milly Barll</td>
 						<td class="rank">654</td>
 						<td class="score">3111/4000</td>
@@ -9353,13 +9357,12 @@
                     outerWindow:1,
                 }
             };
-            var userList = new List('users', options);
+            var userList = new List('bpi', options);
 
             userList.on('sortStart', function(a){
                 console.log(a.i);
                 a.i=1;
-            });
-            userList.sort('title', {order : 'asc'});
+			});
         </script>
 
         <style>

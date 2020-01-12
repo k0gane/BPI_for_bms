@@ -42,7 +42,7 @@ def sougou_BPI(BPI_list):
 n = int(input())
 
 url_stairway = "http://stairway.sakura.ne.jp/bms/LunaticRave2/?contents=player&page="
-
+link_lr2mypage = "http://www.dream-pro.info/~lavalse/LR2IR/search.cgi?mode=mypage&playerid=" + str(n)
 with open("songs.json", "r") as f:
     songs_data = json.load(f)
 
@@ -50,7 +50,25 @@ url = url_stairway + str(n)
 tag_html = urllib.request.urlopen(url).read().decode('shift_JIS', 'ignore')
 tag_soup = BeautifulSoup(tag_html, "html.parser")
 song_table=str(tag_soup.findAll("table")[5]).split("\n")
+clear_table = song_table[5].split('>')[2:]
+clear_number = []
+
+for i in range(0, len(clear_table)-2, 2):
+    clear_number.append(clear_table[i].split('<')[0])
+
+
+score_table= song_table[-5].split('>')[2:]
+score_number = []
+
+for i in range(0, len(score_table)-2, 2):
+    score_number.append(score_table[i].split('<')[0])
 my_data = {}
+
+tag_html = urllib.request.urlopen(link_lr2mypage).read().decode('shift_JIS', 'ignore')
+tag_soup = BeautifulSoup(tag_html, "html.parser")
+status_table=str(tag_soup.findAll("table")[0]).split("\n")
+player_name = status_table[1].split('>')[4].split('<')[0]
+dani_sp = status_table[3].split('>')[4].split('<')[0].split('/')[0]
 
 for i in range(1, 1036):
     song_id = i
@@ -95,8 +113,8 @@ for i in range(1, 1036):
 
 sorted_BPI = sorted(BPI_list, reverse=True)
 sougou = sougou_BPI(BPI_list)
-print(sorted_BPI[:10])
-print(sougou)
+print(clear_number)
+print(score_number)
 
 
 html_string = '''
